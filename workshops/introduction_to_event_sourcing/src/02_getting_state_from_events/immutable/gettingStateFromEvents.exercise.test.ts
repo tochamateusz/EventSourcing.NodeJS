@@ -1,5 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { ShoppingCartEvent } from '../oop/gettingStateFromEvents.exercise.test';
+import { RandomUuid } from 'testcontainers';
+import { time } from 'console';
 
 export type Event<
   EventType extends string = string,
@@ -75,9 +77,43 @@ export type ShoppingCart = Readonly<{
   canceledAt?: Date;
 }>;
 
+const initShopingCart = (): ShoppingCart => {
+  let cart: ShoppingCart = {
+    id: uuid(),
+    clientId: '',
+    status: ShoppingCartStatus.Pending,
+    productItems: [],
+    openedAt: new Date(),
+  };
+
+  return cart;
+};
+
 export const getShoppingCart = (_events: ShoppingCartEvent[]): ShoppingCart => {
-  // 1. Add logic here
-  throw new Error('Not implemented!');
+  const cart = initShopingCart();
+  return _events.reduce((state, event) => {
+    switch (event.type) {
+      case 'ShoppingCartOpened': {
+        return state;
+      }
+      case 'ProductItemAddedToShoppingCart': {
+        return state;
+      }
+
+      case 'ProductItemRemovedFromShoppingCart': {
+        return state;
+      }
+
+      case 'ShoppingCartConfirmed': {
+        return state;
+      }
+      case 'ShoppingCartCanceled':
+        return state;
+      default: {
+        return state;
+      }
+    }
+  }, cart);
 };
 
 describe('Events definition', () => {

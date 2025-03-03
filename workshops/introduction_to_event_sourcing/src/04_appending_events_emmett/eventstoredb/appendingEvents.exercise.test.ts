@@ -4,6 +4,7 @@ import {
   type EventStoreDBEventStore,
   getEventStoreDBEventStore,
 } from '@event-driven-io/emmett-esdb';
+import { EventStoreDBClient, jsonEvent } from '@eventstore/db-client';
 import { v4 as uuid } from 'uuid';
 
 export interface ProductItem {
@@ -64,12 +65,20 @@ export type ShoppingCartEvent =
   | ShoppingCartCanceled;
 
 const appendToStream = async (
-  _eventStore: EventStoreDBEventStore,
+  _eventStore: EventStoreDBClient,
   _streamName: string,
   _events: ShoppingCartEvent[],
 ): Promise<bigint> => {
   // TODO: Fill append events logic here.
-  return Promise.reject(new Error('Not implemented!'));
+  const events = _events.map(jsonEvent<ShoppingCartEvent>);
+
+  try {
+    const all = await _eventStore.appendToStream(_streamName, events);
+    return all.nextExpectedRevision;
+  } catch (e) {
+    console.error({ e });
+    throw e;
+  }
 };
 
 describe('Appending events', () => {

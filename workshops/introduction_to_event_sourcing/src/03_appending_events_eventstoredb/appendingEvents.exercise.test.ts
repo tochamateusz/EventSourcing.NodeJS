@@ -1,5 +1,5 @@
 import { getEventStoreDBTestClient } from '#core/testing/eventStoreDB';
-import { EventStoreDBClient } from '@eventstore/db-client';
+import { EventStoreDBClient, jsonEvent } from '@eventstore/db-client';
 import { v4 as uuid } from 'uuid';
 
 export type Event<
@@ -73,7 +73,18 @@ const appendToStream = async (
   _events: ShoppingCartEvent[],
 ): Promise<bigint> => {
   // TODO: Fill append events logic here.
-  return Promise.reject(new Error('Not implemented!'));
+  //
+
+  const events = _events.map(jsonEvent<ShoppingCartEvent>);
+  console.debug({ events });
+
+  try {
+    const all = await _eventStore.appendToStream(_streamName, events);
+    return all.nextExpectedRevision;
+  } catch (e) {
+    console.error({ e });
+    throw e;
+  }
 };
 
 describe('Appending events', () => {
