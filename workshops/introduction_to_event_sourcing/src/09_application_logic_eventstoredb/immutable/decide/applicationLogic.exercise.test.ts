@@ -16,7 +16,7 @@ describe('Application logic', () => {
 
   beforeAll(async () => {
     eventStoreDB = await getEventStoreDBTestClient();
-    app = getApplication(shoppingCartApi);
+    app = getApplication(shoppingCartApi(eventStoreDB));
   });
 
   afterAll(() => eventStoreDB.dispose());
